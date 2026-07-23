@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="card">
+    <h1>Search Result</h1>
+
+    <!-- query_text is rendered through Jinja2's default auto-escaping,
+         so any HTML-significant characters are encoded and cannot
+         execute as markup/script (XSS output-encoding control). -->
+    <p class="result-label">You searched for:</p>
+    <p class="result-value">{{ query_text }}</p>
+    <p class="result-time">Logged at: {{ query_time }}</p>
+
+    <a class="back-btn" href="{{ url_for('index') }}">&larr; Back</a>
+  </main>
+</body>
+</html>
