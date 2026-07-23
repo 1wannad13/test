@@ -26,7 +26,11 @@ jobs:
         run: pip install pip-audit
 
       - name: Run pip-audit against requirements.txt
-        run: pip-audit -r requirements.txt -f json -o pip-audit-report.json
+        run: pip-audit -r requirements.txt
+
+      - name: Generate pip-audit JSON report
+        if: always()
+        run: pip-audit -r requirements.txt -f json -o pip-audit-report.json || true
 
       - name: Upload pip-audit report
         if: always()
@@ -69,6 +73,38 @@ jobs:
         with:
           name: owasp-dependency-check-report
           path: reports
+
+  # ---------------------------------------------------------------------
+  # Static analysis: ESLint Security (eslint-plugin-security) over the
+  # client-side JS, catching patterns like eval(), non-literal RegExp/
+  # require(), and other JS-specific security anti-patterns.
+  # ---------------------------------------------------------------------
+  eslint-security:
+    name: ESLint Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint Security
+        run: npx eslint static/js --max-warnings=0
+
+      - name: Generate ESLint Security JSON report
+        if: always()
+        run: npx eslint static/js -f json -o eslint-security-report.json || true
+
+      - name: Upload ESLint Security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-security-report
+          path: eslint-security-report.json
 
   # ---------------------------------------------------------------------
   # Integration tests: bring the full docker-compose stack (web + db) up

@@ -71,23 +71,52 @@ Sheet, OWASP XSS Prevention Cheat Sheet.
   name starts with a digit) with columns `id`, `query_text`,
   `query_time`.
 
+## CI pipeline (GitHub Actions)
+
+`.github/workflows/ci.yml` runs on every push/PR to `main` (and manually via
+"Run workflow"), with five jobs:
+
+- **pip-audit** — Python dependency vulnerability scan (`requirements.txt`).
+- **owasp-dependency-check** — OWASP Dependency-Check SCA scan (full
+  report, optionally faster with an `NVD_API_KEY` repo secret).
+- **eslint-security** — static analysis of `static/js/` with
+  [eslint-plugin-security](https://github.com/eslint-community/eslint-plugin-security),
+  flagging patterns like `eval()`, non-literal `RegExp`/`require()`, and
+  other JS-specific security anti-patterns. Config: `eslint.config.js`.
+- **integration-tests** — brings up the full `docker compose` stack
+  (web + db) and exercises it over HTTP with `tests/test_integration.py`.
+- **ui-tests** — drives a headless browser (Playwright) against the app
+  over HTTP with `tests/test_ui.py`, covering both the happy path and
+  client-side validation.
+
+Each job uploads its report as a build artifact, even on failure.
+
 ## Files
 
 ```
 webapp/
-├── app.py                 # Flask app: routes + validation + DB access
+├── app.py                    # Flask app: routes + validation + DB access
 ├── requirements.txt
+├── requirements-dev.txt      # test/CI-only deps (pytest, playwright, requests)
+├── package.json              # eslint + eslint-plugin-security devDeps
+├── eslint.config.js          # ESLint Security flat config
 ├── Dockerfile
 ├── docker-compose.yml
+├── .github/
+│   └── workflows/
+│       └── ci.yml            # pip-audit, OWASP DC, ESLint Security, integration + UI tests
 ├── db/
-│   └── init.sql            # creates table "2402554"
+│   └── init.sql              # creates table "2402554"
+├── tests/
+│   ├── test_integration.py   # HTTP integration tests
+│   └── test_ui.py            # Playwright UI tests
 ├── templates/
-│   ├── index.html           # home / search page
-│   ├── result.html          # result page
+│   ├── index.html            # home / search page
+│   ├── result.html           # result page
 │   └── 404.html
 └── static/
     ├── css/style.css
-    └── js/validate.js       # client-side validation
+    └── js/validate.js        # client-side validation
 ```
 
 ## Notes

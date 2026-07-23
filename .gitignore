@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 reports/
 pip-audit-report.json
+node_modules/
+eslint-security-report.json

@@ -1,0 +1,13 @@
+{
+  "name": "search-webapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static analysis / lint tooling for the search web app's client-side JS.",
+  "scripts": {
+    "lint:security": "eslint static/js --max-warnings=0"
+  },
+  "devDependencies": {
+    "eslint": "^10.7.0",
+    "eslint-plugin-security": "^4.0.1"
+  }
+}
