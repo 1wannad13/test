@@ -1,0 +1,6 @@
+# Test / CI-only dependencies (not needed to run the app itself -
+# see requirements.txt for that).
+pytest==8.2.2
+requests==2.32.3
+playwright==1.45.0
+pytest-playwright==0.5.1
